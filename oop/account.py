@@ -21,7 +21,7 @@ class Account:
 
 # Withdraw: method to withdraw funds, store the withdrawal and return a message with the new balance to the customer. An account cannot be overdrawn.
     def withdrawals(self,withdraw_amount):
-        if withdraw_amount <= 0:
+        if withdraw_amount < self.min_balance:
             return "Put a reasonable amount"
         if self.balance < withdraw_amount:
             return"The amount you have is not enough"
