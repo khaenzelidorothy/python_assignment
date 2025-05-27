@@ -56,9 +56,12 @@ class Account:
 # Request Loan: Method to request a loan amount.
 
     def request_loan(self,loan_amount):
-        if loan_amount <= 0:
+        loan_limit = 2000
+        if loan_amount > loan_limit:
             return f"Amount cannot be loaned"
-        self.loan += loan_amount
+        else:
+            self.loan += loan_amount
+            self.balance += loan_amount
         return f"Your loan is {self.loan}"
 
 # Repay Loan: Method to repay a loan with a given amount.
