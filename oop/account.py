@@ -1,6 +1,8 @@
+from datetime import datetime
 class Transaction:
-    def __init__(self,amount,transaction_type):
+    def __init__(self,narration,amount,transaction_type):
         self.date_time = datetime.now()
+        self.narration = narration
         self.amount = amount
         self.transaction_type = transaction_type
 
@@ -11,7 +13,7 @@ class Account:
         self.__owner = owner
         self.__account_number = account_number
         self.__transaction = []
-        self.__deposit = []
+        self.__balance = 0
         self.__min_balance = 50
         self.__loan = 0
         self.__is_frozen = False
@@ -21,23 +23,22 @@ class Account:
         if amount <=0:
             return "cannot be deposited"
         if amount > 0:
-            self.__transaction.append(Transaction("Deposit", amount,"CREDIT"))
+            self.__transaction.append(Transaction("Deposit",amount,"CREDIT"))
+            self.__balance+=amount
         return f"Confirmed you have received {amount}, new balance is {self.get_balance()}"
 
 # Withdraw: method to withdraw funds, store the withdrawal and return a message with the new balance to the customer. An account cannot be overdrawn.
     def withdrawals(self,amount):
-        if withdraw_amount <= 0:
+        if amount <= 0:
             return "Put a reasonable amount"
-        if self.get_balance() -withdraw_amount < self.__min_balance:
+        if amount < self.__min_balance:
             return"The amount you have is not enough"
-            self.__transaction.append(Transaction("Withdrawal", -amount,"DEBIT"))
+            self.__transaction.append(Transaction("Withdrawal",-amount,"DEBIT"))
             return f"Your new balance is {self.get_balance()}"
 
 # Get Balance: Method to calculate an account balance from deposits and withdrawals.
     def get_balance(self):
-        for i in self.__transaction:
-            return sum(t.amount)
-        # return f"Dear {self.name}, your balance is {self.balance}"
+            return sum(t.amount for t in self.__transaction)
 
 
 # Transfer Funds: Method to transfer funds from one account to an instance of another account.
@@ -47,7 +48,8 @@ class Account:
         if self.get_balance() - amount < self.__min_balance:
             return "Insufficient amount"
             self.__transaction.append(Transaction(f"You have transferred {transfer_account.account_number}",-amount,"DEBIT"))
-        return f"Dear {self.name} the amount you've transferred is {amount} and your balance is {self.get_balance()}"
+            self.__balance-=amount
+        return f"Dear {self.__owner} the amount you've transferred is {amount} and your balance is {self.get_balance()}"
 
 # Request Loan: Method to request a loan amount.
 
@@ -58,7 +60,7 @@ class Account:
         else:
             self.__loan += amount
             self.__transaction.append(Transaction("Loan granted",amount,"CREDIT"))
-            self.__deposit.append(amount)
+            self.__balance+=amount
         return f"Your loan is {self.__loan}"
 
 # Repay Loan: Method to repay a loan with a given amount.
